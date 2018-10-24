@@ -1,0 +1,24 @@
+{
+  "name": "pathserver",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon --exec babel-node index.js",
+    "build": "NODE_ENV=PRODUCTION babel src -d dist --copy-files",
+    "serve": "NODE_ENV=production node dist/index.js"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.2",
+    "graphql-yoga": "^1.16.7",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "dotenv": "^6.1.0",
+    "nodemon": "^1.18.4"
+  }
+}
