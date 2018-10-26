@@ -2,6 +2,15 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import mongoose, { Schema } from 'mongoose';
 
+const MarksheetSchema = new Schema(
+  {
+    image: String,
+    choice: String,
+    vessels: Boolean,
+  },
+  { _id: false }
+);
+
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -10,6 +19,7 @@ const UserSchema = new Schema({
   },
   hash: String,
   salt: String,
+  marksheet: [MarksheetSchema],
 });
 UserSchema.index({
   username: 'text',
@@ -28,11 +38,11 @@ UserSchema.methods.validPassword = function(password) {
   return this.hash === hash;
 };
 
-UserSchema.methods.generateJWT = function(days = 1) {
+UserSchema.methods.generateJWT = function() {
   // set expiration to 1 day
   const today = new Date();
   let exp = new Date(today);
-  exp.setDate(today.getDate() + days);
+  exp.setDate(today.getDate() + 1);
   const payload = {
     _id: this._id,
     username: this.username,

@@ -1,5 +1,6 @@
-import user from './user';
-import mongoose, { Model } from 'mongoose';
+import User from './user';
+import Image from './image';
+import mongoose from 'mongoose';
 mongoose.Promise = require('bluebird');
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -46,7 +47,17 @@ process.on('SIGINT', function() {
 });
 
 const models = {
-  user,
+  User,
+  Image,
 };
+// User.findOne({ username: 'test' }, (err, user) => {
+//   if (!user) {
+//     const testUser = new User({
+//       username: 'test',
+//     });
+//     testUser.setPassword('pass');
+//     testUser.save();
+//   }
+// });
 
 export { startDB, models };

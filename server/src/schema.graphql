@@ -1,0 +1,34 @@
+type Query {
+  items: [Item!]!
+  user(id: String!): User
+  images: [Image]
+}
+type Mutation {
+  login(username: String!, password: String!): String
+  upvote(id: String!, choice: String!, vessels: Boolean!): String
+}
+type User {
+  _id: ID
+  username: String
+  marksheet: [Marksheet]
+}
+type Marksheet {
+  image: String
+  choice: String
+  vessels: Boolean
+}
+
+type Image {
+  _id: ID
+  url: String!
+  a: Int
+  b1: Int
+  b2: Int
+  b3: Int
+  vessels: Int
+  noVessels: Int
+}
+
+type Item {
+  name: String!
+}

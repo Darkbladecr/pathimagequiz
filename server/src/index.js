@@ -1,36 +1,39 @@
 import 'dotenv/config';
-console.log(process.env.MONGODB);
 import { GraphQLServer } from 'graphql-yoga';
 import { startDB, models } from './models';
+import resolvers from './resolvers';
+import fs from 'fs';
+import path from 'path';
+import jwt from 'jsonwebtoken';
 
-const db = startDB(process.env.MONGODB);
+const mongo = startDB(process.env.MONGODB);
 
-const context = {
-  models,
-  db,
+const getScope = token => {
+  if (!token) {
+    return null;
+  }
+  try {
+    const user = jwt.verify(token, process.env.SECRET);
+    return user;
+  } catch (e) {
+    return null;
+  }
 };
 
-const sampleItems = [
-  { name: 'Apple' },
-  { name: 'Banana' },
-  { name: 'Orange' },
-  { name: 'Melon' },
-];
-
-const typeDefs = `
-  type Query {
-    items: [Item!]!
-  }
-  type Item {
-    name: String!
-  }
-`;
-
-const resolvers = {
-  Query: {
-    items: () => sampleItems,
-  },
+const context = req => {
+  const headers = req.request.headers;
+  const hasAuth = headers.hasOwnProperty('authorization');
+  return {
+    mongo,
+    db: models,
+    user: hasAuth ? getScope(headers.authorization) : null,
+  };
 };
+
+const typeDefs = fs.readFileSync(
+  path.join(__dirname, 'schema.graphql'),
+  'utf8'
+);
 
 const options = { port: 4000 };
 const server = new GraphQLServer({ typeDefs, resolvers, context });
