@@ -35,7 +35,7 @@ const typeDefs = fs.readFileSync(
   'utf8'
 );
 
-const options = { port: 4000 };
+const options = { port: 4000, endpoint: '/api' };
 const server = new GraphQLServer({ typeDefs, resolvers, context });
 server.start(options, () =>
   console.log('Server is running on localhost:' + options.port)
