@@ -9,7 +9,7 @@ import {
   Image,
 } from 'semantic-ui-react';
 import gql from 'graphql-tag';
-import { graphql, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import image from './image.png';
 import { authControl } from '../auth';
 import { withRouter } from 'react-router-dom';
@@ -30,30 +30,45 @@ const SignOutButton = withRouter(({ history }) => (
 ));
 
 class QuizForm extends Component {
-  state = { vessels: false, value: null };
+  state = { qNum: 0, vessels: false, value: null };
 
   handleChange = (e, { value }) => this.setState({ value });
   toggle = () => this.setState({ vessels: !this.state.vessels });
 
   render() {
-    const { value, vessels } = this.state;
+    const { qNum, value, vessels } = this.state;
     const { username } = authControl.decoded;
 
     return (
-      <Query query={ITEMS_QUERY}>
+      <Query query={IMAGES_QUERY}>
         {({ loading, error, data }) => {
           if (loading) return <ScreenLoader />;
-          if (error) return `Error! ${error.message}`;
+          if (error) return `${error.message}`;
+          const { images } = data;
 
           return (
             <div className="quizForm">
-              <Menu>
+              <Menu fixed="top">
                 <Menu.Item>
                   <h3>
                     <Icon name="user md" /> {username}
                   </h3>
                 </Menu.Item>
-                <Menu.Item header>Qustion X of 200</Menu.Item>
+                <Menu.Item>
+                  <Button
+                    labelPosition="left"
+                    icon="left chevron"
+                    content="Previous"
+                  />
+                </Menu.Item>
+                <Menu.Item header>Qustion {qNum + 1} of 200</Menu.Item>
+                <Menu.Item>
+                  <Button
+                    labelPosition="right"
+                    icon="right chevron"
+                    content="Next"
+                  />
+                </Menu.Item>
                 <Menu.Menu position="right">
                   <Menu.Item>
                     <SignOutButton />
@@ -62,6 +77,7 @@ class QuizForm extends Component {
               </Menu>
               <Grid centered columns={2}>
                 <Grid.Column>
+                  <pre>{images[qNum]._id}</pre>
                   <Image src={image} />
                   <Divider hidden />
                 </Grid.Column>
@@ -74,9 +90,6 @@ class QuizForm extends Component {
                     seen in this image:
                   </p>
                   <Form>
-                    <Form.Field>
-                      Selected value: <b>{this.state.value}</b>
-                    </Form.Field>
                     <Form.Radio
                       label="Normal/Low grade IN (A)"
                       value="a"
@@ -120,12 +133,13 @@ class QuizForm extends Component {
   }
 }
 
-const ITEMS_QUERY = gql`
-  query ItemsQuery {
-    items {
-      name
+const IMAGES_QUERY = gql`
+  query ImagesQuery {
+    images {
+      _id
+      url
     }
   }
 `;
 
-export default graphql(ITEMS_QUERY)(QuizForm);
+export default QuizForm;
