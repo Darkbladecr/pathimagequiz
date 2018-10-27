@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {
+  Menu,
+  Icon,
   Divider,
-  Dimmer,
-  Loader,
   Button,
   Form,
   Grid,
@@ -11,6 +11,23 @@ import {
 import gql from 'graphql-tag';
 import { graphql, Query } from 'react-apollo';
 import image from './image.png';
+import { authControl } from '../auth';
+import { withRouter } from 'react-router-dom';
+import ScreenLoader from '../loader';
+
+const SignOutButton = withRouter(({ history }) => (
+  <Button
+    icon
+    labelPosition="right"
+    onClick={() => {
+      authControl.signout();
+      history.push('/');
+    }}
+  >
+    Sign Out
+    <Icon name="log out" />
+  </Button>
+));
 
 class QuizForm extends Component {
   state = { vessels: false, value: null };
@@ -20,20 +37,29 @@ class QuizForm extends Component {
 
   render() {
     const { value, vessels } = this.state;
+    const { username } = authControl.decoded;
 
     return (
       <Query query={ITEMS_QUERY}>
         {({ loading, error, data }) => {
-          if (loading)
-            return (
-              <Dimmer active inverted>
-                <Loader size="massive" content="Loading" inverted />
-              </Dimmer>
-            );
+          if (loading) return <ScreenLoader />;
           if (error) return `Error! ${error.message}`;
 
           return (
             <div className="quizForm">
+              <Menu>
+                <Menu.Item>
+                  <h3>
+                    <Icon name="user md" /> {username}
+                  </h3>
+                </Menu.Item>
+                <Menu.Item header>Qustion X of 200</Menu.Item>
+                <Menu.Menu position="right">
+                  <Menu.Item>
+                    <SignOutButton />
+                  </Menu.Item>
+                </Menu.Menu>
+              </Menu>
               <Grid centered columns={2}>
                 <Grid.Column>
                   <Image src={image} />
@@ -50,9 +76,6 @@ class QuizForm extends Component {
                   <Form>
                     <Form.Field>
                       Selected value: <b>{this.state.value}</b>
-                    </Form.Field>
-                    <Form.Field>
-                      <pre>{JSON.stringify(data, null, 2)}</pre>
                     </Form.Field>
                     <Form.Radio
                       label="Normal/Low grade IN (A)"
