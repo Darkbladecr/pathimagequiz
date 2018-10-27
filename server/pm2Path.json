@@ -1,0 +1,10 @@
+{
+  "name": "PathQuiz",
+  "script": "./dist/index.js",
+  "args": ["dotenv_config_path=./.env"],
+  "node_args": ["-r", "dotenv/config"],
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": 4000
+  }
+}
