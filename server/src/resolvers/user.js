@@ -1,8 +1,8 @@
 import { auth } from './auth';
 
-const user = async (_, { id }, { db }) => {
+const user = async (_, { _id }, { db }) => {
   try {
-    const user = await db.User.findById(id);
+    const user = await db.User.findById(_id);
     if (!user) {
       throw new Error('User not found.');
     }
@@ -29,15 +29,15 @@ const login = async (_, { username, password }, { db }) => {
   }
 };
 
-const upvote = async (_, { id, choice, vessels }, { db, user }) => {
+const upvote = async (_, { _id, choice, vessels }, { db, user }) => {
   auth(user);
   try {
-    const image = await db.Image.findById(id);
+    const image = await db.Image.findById(_id);
     if (!image) {
       throw new Error('Image not found.');
     }
     const fullUser = await db.User.findById(user._id);
-    const found = fullUser.marksheet.findIndex(e => e.image === id);
+    const found = fullUser.marksheet.findIndex(e => e.image === _id);
     if (found > -1) {
       const { choice: prevChoice, vessels: prevVessels } = fullUser.marksheet[
         found
@@ -62,7 +62,7 @@ const upvote = async (_, { id, choice, vessels }, { db, user }) => {
       }
     } else {
       fullUser.marksheet.push({
-        image: id,
+        image: _id,
         choice,
         vessels,
       });

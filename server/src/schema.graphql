@@ -1,11 +1,11 @@
 type Query {
   items: [Item!]!
-  user(id: String!): User
+  user(_id: String!): User
   images: [Image]
 }
 type Mutation {
   login(username: String!, password: String!): String
-  upvote(id: String!, choice: String!, vessels: Boolean!): String
+  upvote(_id: String!, choice: String!, vessels: Boolean!): String
 }
 type User {
   _id: ID

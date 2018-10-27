@@ -1,19 +1,28 @@
 import React, { Component } from 'react';
-import {
-  Menu,
-  Icon,
-  Divider,
-  Button,
-  Form,
-  Grid,
-  Image,
-} from 'semantic-ui-react';
+import { Menu, Icon, Divider, Button, Grid, Image } from 'semantic-ui-react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import image from './image.png';
 import { authControl } from '../auth';
 import { withRouter } from 'react-router-dom';
 import ScreenLoader from '../loader';
+import QuizForm from './quizForm';
+
+const IMAGES_QUERY = gql`
+  query QuizQuery($_id: String!) {
+    images {
+      _id
+      url
+    }
+    user(_id: $_id) {
+      marksheet {
+        image
+        choice
+        vessels
+      }
+    }
+  }
+`;
 
 const SignOutButton = withRouter(({ history }) => (
   <Button
@@ -29,22 +38,25 @@ const SignOutButton = withRouter(({ history }) => (
   </Button>
 ));
 
-class QuizForm extends Component {
-  state = { qNum: 0, vessels: false, value: null };
+class Quiz extends Component {
+  state = { qNum: 0 };
 
-  handleChange = (e, { value }) => this.setState({ value });
-  toggle = () => this.setState({ vessels: !this.state.vessels });
+  changeQuestion(num) {
+    this.setState({ qNum: this.state.qNum + num });
+  }
 
   render() {
-    const { qNum, value, vessels } = this.state;
-    const { username } = authControl.decoded;
+    const { qNum } = this.state;
+    const { _id, username } = authControl.decoded;
 
     return (
-      <Query query={IMAGES_QUERY}>
+      <Query query={IMAGES_QUERY} variables={{ _id }}>
         {({ loading, error, data }) => {
           if (loading) return <ScreenLoader />;
           if (error) return `${error.message}`;
           const { images } = data;
+          const { marksheet } = data.user;
+          const totalQuestions = images.length;
 
           return (
             <div className="quizForm">
@@ -59,14 +71,20 @@ class QuizForm extends Component {
                     labelPosition="left"
                     icon="left chevron"
                     content="Previous"
+                    disabled={qNum === 0}
+                    onClick={() => this.changeQuestion(-1)}
                   />
                 </Menu.Item>
-                <Menu.Item header>Qustion {qNum + 1} of 200</Menu.Item>
+                <Menu.Item header>
+                  Qustion {qNum + 1} of {totalQuestions}
+                </Menu.Item>
                 <Menu.Item>
                   <Button
                     labelPosition="right"
                     icon="right chevron"
                     content="Next"
+                    disabled={qNum === totalQuestions - 1}
+                    onClick={() => this.changeQuestion(1)}
                   />
                 </Menu.Item>
                 <Menu.Menu position="right">
@@ -89,40 +107,11 @@ class QuizForm extends Component {
                     the lesion histology based on the observed patterns of IPCLs
                     seen in this image:
                   </p>
-                  <Form>
-                    <Form.Radio
-                      label="Normal/Low grade IN (A)"
-                      value="a"
-                      checked={value === 'a'}
-                      onChange={this.handleChange}
-                    />
-                    <Form.Radio
-                      label="High grade IN/lamina propria (B1)"
-                      value="b1"
-                      checked={value === 'b1'}
-                      onChange={this.handleChange}
-                    />
-                    <Form.Radio
-                      label="Muscularis mucosa/Submucosa 1 (B2)"
-                      value="b2"
-                      checked={value === 'b2'}
-                      onChange={this.handleChange}
-                    />
-                    <Form.Radio
-                      label="Submucosa 2 or deeper (B3)"
-                      value="b3"
-                      checked={value === 'b3'}
-                      onChange={this.handleChange}
-                    />
-                    <Form.Checkbox
-                      label="Were deep submucosal vessels visible in this image?"
-                      checked={vessels}
-                      onChange={this.toggle}
-                    />
-                    <Button type="submit" disabled={!value}>
-                      Submit
-                    </Button>
-                  </Form>
+                  <QuizForm
+                    qNum={qNum}
+                    image={images[qNum]}
+                    marksheet={marksheet}
+                  />
                 </Grid.Column>
               </Grid>
             </div>
@@ -133,13 +122,4 @@ class QuizForm extends Component {
   }
 }
 
-const IMAGES_QUERY = gql`
-  query ImagesQuery {
-    images {
-      _id
-      url
-    }
-  }
-`;
-
-export default QuizForm;
+export default Quiz;
