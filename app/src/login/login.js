@@ -12,7 +12,7 @@ import { Mutation } from 'react-apollo';
 import { authControl } from '../auth';
 import { Redirect } from 'react-router-dom';
 import ScreenLoader from '../loader';
-import withRouter from 'react-router-dom/withRouter';
+// import withRouter from 'react-router-dom/withRouter';
 
 const LOGIN = gql`
   mutation Login($username: String!, $password: String!) {
@@ -20,9 +20,12 @@ const LOGIN = gql`
   }
 `;
 
-const SuccessfulSignIn = withRouter(({ history, data }) => {
-  authControl.signin(data.login).then(() => history.push('/quiz'));
-});
+// const SuccessfulSignIn = withRouter(({ history, data }) => {
+//   authControl.signin(data.login).then(message => {
+//     console.log(message);
+//     history.push('/quiz');
+//   });
+// });
 
 class LoginForm extends Component {
   state = { username: '', password: '', loggedIn: false, loading: true };
@@ -116,7 +119,15 @@ class LoginForm extends Component {
                           content={message}
                         />
                       ))}
-                    {data && <SuccessfulSignIn data={data} />}
+                    {/* {data && <SuccessfulSignIn data={data} />} */}
+                    {data &&
+                      authControl.signin(data.login) && (
+                        <Redirect
+                          to={{
+                            pathname: '/quiz',
+                          }}
+                        />
+                      )}
                   </Form>
                 </Grid.Column>
               </Grid>

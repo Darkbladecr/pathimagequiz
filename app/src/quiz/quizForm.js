@@ -17,7 +17,7 @@ class QuizForm extends Component {
 
   loadPrevAnswer() {
     const { image, marksheet } = this.props;
-    if (marksheet.length) {
+    if (marksheet.length > 0) {
       const index = marksheet.findIndex(e => e.image === image._id);
       if (index > -1) {
         const { choice: value, vessels } = marksheet[index];

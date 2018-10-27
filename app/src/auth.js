@@ -10,14 +10,14 @@ const authControl = {
   async signin(token) {
     if (!token) return;
     this.isAuthenticated = true;
-    await localforage.setItem('jwt', token);
     const decoded = jwt_decode(token);
     this.decoded = decoded;
+    return await localforage.setItem('jwt', token);
   },
   async signout() {
     this.isAuthenticated = false;
-    await localforage.removeItem('jwt');
     this.decoded = {};
+    return await localforage.removeItem('jwt');
   },
   async checkToken() {
     let decoded;
