@@ -12,7 +12,7 @@ import { ApolloProvider } from 'react-apollo';
 import ApolloClient from 'apollo-boost';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: '/api',
   request: async operation => {
     const authorization = await authControl.getToken();
     operation.setContext({ headers: { authorization } });
