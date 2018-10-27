@@ -61,7 +61,7 @@ class LoginForm extends Component {
                 verticalAlign="middle"
               >
                 <Grid.Column style={{ maxWidth: 450 }}>
-                  <Header as="h2" color="teal" textAlign="center">
+                  <Header as="h2" color="blue" textAlign="center">
                     Log-in to your account
                   </Header>
                   <Form
@@ -98,7 +98,7 @@ class LoginForm extends Component {
                         onChange={this.handleChange}
                       />
 
-                      <Button type="submit" color="teal" fluid size="large">
+                      <Button type="submit" color="blue" fluid size="large">
                         Login
                       </Button>
                     </Segment>
