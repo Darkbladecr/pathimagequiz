@@ -18,7 +18,7 @@ const mongooseOpt = {
 
 const startDB = uri =>
   mongoose.connect(
-    process.env.MONGODB,
+    uri,
     mongooseOpt
   );
 

@@ -61,3 +61,11 @@ typings/
 .next
 
 dist/
+app/public/images/HGD-LPM
+app/public/images/MM-SM1
+app/public/images/Normal
+app/public/images/SM2+
+server/src/models/dump
+server/src/models/usersetup.js
+server/src/models/sample.txt
+*.py

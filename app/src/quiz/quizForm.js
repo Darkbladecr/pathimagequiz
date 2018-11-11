@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
+import { toast } from 'react-toastify';
 
 const UPVOTE = gql`
   mutation UpvoteImage($_id: String!, $choice: String!, $vessels: Boolean!) {
@@ -25,7 +26,11 @@ class QuizForm extends Component {
           value,
           vessels,
         });
+      } else {
+        this.setState({ vessels: false, value: null });
       }
+    } else {
+      this.setState({ vessels: false, value: null });
     }
   }
 
@@ -44,7 +49,7 @@ class QuizForm extends Component {
 
   render() {
     const { value, vessels } = this.state;
-    const { image } = this.props;
+    const { image, changeQuestion } = this.props;
 
     return (
       <Mutation mutation={UPVOTE}>
@@ -60,6 +65,8 @@ class QuizForm extends Component {
                     vessels,
                   },
                 });
+                toast('Answer saved.');
+                changeQuestion(1);
               }}
             >
               <Form.Radio
@@ -94,7 +101,6 @@ class QuizForm extends Component {
               <Button type="submit" disabled={!value}>
                 Submit
               </Button>
-              {data && <pre>{data.upvote}</pre>}
             </Form>
           );
         }}

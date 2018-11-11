@@ -12,6 +12,7 @@
     "bluebird": "^3.5.2",
     "graphql-yoga": "^1.16.7",
     "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
     "mongoose": "^5.3.6"
   },
   "devDependencies": {
@@ -19,6 +20,7 @@
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "casual": "^1.5.19",
     "dotenv": "^6.1.0",
     "nodemon": "^1.18.4"
   }

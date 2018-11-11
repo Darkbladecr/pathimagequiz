@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Menu, Icon, Divider, Button, Grid, Image } from 'semantic-ui-react';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-import image from './image.png';
+import { ToastContainer, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+
 import { authControl } from '../auth';
 import { withRouter } from 'react-router-dom';
 import ScreenLoader from '../loader';
@@ -54,8 +56,8 @@ class Quiz extends Component {
         {({ loading, error, data }) => {
           if (loading) return <ScreenLoader />;
           if (error) return `${error.message}`;
-          const { images } = data;
           const { marksheet } = data.user;
+          const { images } = data;
           const totalQuestions = images.length;
 
           return (
@@ -87,6 +89,22 @@ class Quiz extends Component {
                     onClick={() => this.changeQuestion(1)}
                   />
                 </Menu.Item>
+                {qNum !== marksheet.length && (
+                  <Menu.Item>
+                    <Button
+                      labelPosition={qNum < marksheet.length ? 'right' : 'left'}
+                      icon={
+                        qNum < marksheet.length
+                          ? 'angle double right'
+                          : 'angle double left'
+                      }
+                      content="Continue"
+                      onClick={() =>
+                        this.changeQuestion(marksheet.length - qNum)
+                      }
+                    />
+                  </Menu.Item>
+                )}
                 <Menu.Menu position="right">
                   <Menu.Item>
                     <SignOutButton />
@@ -95,8 +113,7 @@ class Quiz extends Component {
               </Menu>
               <Grid centered columns={2}>
                 <Grid.Column>
-                  <pre>{images[qNum]._id}</pre>
-                  <Image src={image} />
+                  <Image centered src={`images/${images[qNum].url}`} />
                   <Divider hidden />
                 </Grid.Column>
               </Grid>
@@ -111,9 +128,16 @@ class Quiz extends Component {
                     qNum={qNum}
                     image={images[qNum]}
                     marksheet={marksheet}
+                    changeQuestion={num => this.changeQuestion(num)}
                   />
                 </Grid.Column>
               </Grid>
+              <ToastContainer
+                autoClose={3000}
+                transition={Slide}
+                hideProgressBar
+                pauseOnHover={false}
+              />
             </div>
           );
         }}
