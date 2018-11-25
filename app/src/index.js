@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import 'semantic-ui-css/semantic.min.css';
 import LoginForm from './login/login';
-import Quiz from './quiz/quiz';
+import QuizQuery from './quiz/quizQuery';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { authControl } from './auth';
@@ -43,7 +43,7 @@ ReactDOM.render(
   <BrowserRouter>
     <ApolloProvider client={client}>
       <Route path="/" exact component={LoginForm} />
-      <PrivateRoute path="/quiz" component={Quiz} />
+      <PrivateRoute path="/quiz" component={QuizQuery} />
     </ApolloProvider>
   </BrowserRouter>,
   document.getElementById('root')

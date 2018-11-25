@@ -38,12 +38,13 @@ const upvote = async (_, { _id, choice, vessels }, { db, user }) => {
     }
     const fullUser = await db.User.findById(user._id);
     const found = fullUser.marksheet.findIndex(e => e.image === _id);
+    let result;
     if (found > -1) {
       const { choice: prevChoice, vessels: prevVessels } = fullUser.marksheet[
         found
       ];
       if (prevChoice === choice && prevVessels === vessels) {
-        return 'Answer the same.';
+        return fullUser.marksheet[found];
       }
       fullUser.marksheet[found].choice = choice;
       fullUser.marksheet[found].vessels = vessels;
@@ -60,21 +61,27 @@ const upvote = async (_, { _id, choice, vessels }, { db, user }) => {
           image.noVessels += 1;
         }
       }
+      result = fullUser.marksheet[found];
+      console.log(result);
     } else {
-      fullUser.marksheet.push({
+      const data = {
         image: _id,
         choice,
         vessels,
-      });
+      };
+      fullUser.marksheet.push(data);
       image[choice] += 1;
       if (vessels) {
         image.vessels += 1;
       } else {
         image.noVessels += 1;
       }
+      result = data;
+      console.log(result);
     }
     await Promise.all([fullUser.save(), image.save()]);
-    return 'Answer saved.';
+    console.log(result);
+    return result;
   } catch (e) {
     console.error(e);
     throw e;

@@ -3,18 +3,44 @@ import { Button, Form } from 'semantic-ui-react';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { toast } from 'react-toastify';
+import { authControl } from '../auth';
+import { IMAGES_QUERY } from './quizQuery';
 
 const UPVOTE = gql`
   mutation UpvoteImage($_id: String!, $choice: String!, $vessels: Boolean!) {
-    upvote(_id: $_id, choice: $choice, vessels: $vessels)
+    upvote(_id: $_id, choice: $choice, vessels: $vessels) {
+      image
+      choice
+      vessels
+    }
   }
 `;
 
-class QuizForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { vessels: false, value: null };
+const updateCacheUpvote = (cache, { data: { upvote } }) => {
+  console.log(upvote);
+  const { _id } = authControl.decoded;
+  const { user, images } = cache.readQuery({
+    query: IMAGES_QUERY,
+    variables: { _id },
+  });
+  const found = user.marksheet.findIndex(e => e.image === upvote.image);
+  if (found > -1) {
+    user.marksheet[found] = upvote;
+  } else {
+    user.marksheet = [...user.marksheet, upvote];
   }
+  cache.writeQuery({
+    query: IMAGES_QUERY,
+    data: {
+      user,
+      images,
+    },
+    variables: { _id },
+  });
+};
+
+class QuizForm extends Component {
+  state = { vessels: false, value: null };
 
   loadPrevAnswer() {
     const { image, marksheet } = this.props;
@@ -64,6 +90,15 @@ class QuizForm extends Component {
                     choice: value,
                     vessels,
                   },
+                  optimisticResponse: {
+                    upvote: {
+                      image: image._id,
+                      choice: value,
+                      vessels,
+                      __typename: 'Marksheet',
+                    },
+                  },
+                  update: updateCacheUpvote,
                 });
                 toast('Answer saved.');
                 changeQuestion(1);
