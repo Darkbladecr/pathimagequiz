@@ -17,7 +17,6 @@ const UPVOTE = gql`
 `;
 
 const updateCacheUpvote = (cache, { data: { upvote } }) => {
-  console.log(upvote);
   const { _id } = authControl.decoded;
   const { user, images } = cache.readQuery({
     query: IMAGES_QUERY,
@@ -64,7 +63,7 @@ class QuizForm extends Component {
     this.loadPrevAnswer();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (prevProps.qNum !== this.props.qNum) {
       this.loadPrevAnswer();
     }
@@ -79,7 +78,8 @@ class QuizForm extends Component {
 
     return (
       <Mutation mutation={UPVOTE}>
-        {(upvote, { error, data }) => {
+        {(upvote, { error }) => {
+          if (error) toast.error(error.message);
           return (
             <Form
               onSubmit={e => {
