@@ -27,7 +27,7 @@ class Quiz extends Component {
   componentDidMount() {
     const { qNum } = this.state;
     const { marksheet } = this.props;
-    if (qNum !== marksheet.length - 1) {
+    if (marksheet.length > 0 && qNum !== marksheet.length - 1) {
       this.setState({ qNum: marksheet.length - 1 });
     }
   }
@@ -93,7 +93,14 @@ class Quiz extends Component {
         </Menu>
         <Grid centered columns={2}>
           <Grid.Column>
-            <Image centered src={`images/${images[qNum].url}`} />
+            <Image
+              centered
+              src={`images/${
+                images[qNum] && images[qNum].hasOwnProperty('url')
+                  ? images[qNum].url
+                  : 'image.png'
+              }`}
+            />
             <Divider hidden />
           </Grid.Column>
         </Grid>
