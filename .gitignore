@@ -69,3 +69,4 @@ server/src/models/dump
 server/src/models/usersetup.js
 server/src/models/sample.txt
 *.py
+mongoBackup.sh
