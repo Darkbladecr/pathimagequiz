@@ -7,6 +7,8 @@ import { authControl } from '../auth';
 import { withRouter } from 'react-router-dom';
 import QuizForm from './quizForm';
 
+const imagesrc = require.context('../../public/images', true);
+
 const SignOutButton = withRouter(({ history }) => (
   <Button
     icon
@@ -95,11 +97,13 @@ class Quiz extends Component {
           <Grid.Column>
             <Image
               centered
-              src={`images/${
-                images[qNum] && images[qNum].hasOwnProperty('url')
-                  ? images[qNum].url
-                  : 'image.png'
-              }`}
+              src={imagesrc(
+                `./images/${
+                  images[qNum] && images[qNum].hasOwnProperty('url')
+                    ? images[qNum].url
+                    : 'image.png'
+                }`
+              )}
             />
             <Divider hidden />
           </Grid.Column>
